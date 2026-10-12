@@ -34,20 +34,25 @@ checkout. `crab wrappers list` shows what CRAB finds and where each binary comes
 
 A wrapper is verified when at least one sample case covers it: `crab wrappers test <app>` runs
 the wrapper on the saved output and compares the result with `expected.json`. The wrappers
-listed in `unverified.txt` do not have sample cases yet, so nothing checks their parsing. Most of
-them came from CRAB before this repository existed and work as before.
+listed in `unverified.txt` are exactly those with no sample case yet, so nothing checks their
+parsing. Most of them came from CRAB before this repository existed and work as before.
 
-| App | Wrappers | Status |
-|---|---|---|
-| `blink` | 40 (2 need the fork blink-clean) | 4 with samples, 36 unverified |
-| `graph500` | 1 | unverified |
-| `quantum-espresso` | 4 (pw and ph, v6 and v7) | unverified |
-| `others` | 40 | unverified |
+A case's `case.json` says where its output comes from (`source`). The table counts a wrapper as
+verified on a real run when some case for it holds output the application itself produced (a run
+on a cluster, or the application's own reference output), and as verified on synthetic samples
+only when every case for it was written or reshaped by hand.
+
+| App | Wrappers | Verified (real run) | Verified (synthetic only) | Unverified |
+|---|---|---|---|---|
+| `blink` (2 need the fork blink-clean) | 40 | 2 | 2 | 36 |
+| `graph500` | 1 | 0 | 1 | 0 |
+| `quantum-espresso` (pw and ph, v6 and v7) | 4 | 4 | 0 | 0 |
+| `others` | 40 | 0 | 11 | 29 |
 
 ## Contributing
 
 New wrappers and fixes come in as pull requests; see [CONTRIBUTING.md](CONTRIBUTING.md). A
-pull request is merged when its sample cases pass in CI.
+pull request is merged when its sample cases and the tests pass in CI.
 
 ## License
 

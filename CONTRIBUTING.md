@@ -60,6 +60,19 @@ crab parse myapp/myapp.py myapp/samples/<case>/stdout.txt --check myapp/samples/
 
 ## 4. Open a pull request
 
-Run `crab wrappers test --strict` from a CRAB checkout that uses this repository, then open the
-pull request. CI runs the same command. If your wrapper fixes one listed in `unverified.txt`,
-remove its line there.
+Run both checks from a CRAB checkout that uses this repository, with the CRAB package installed
+(the tests import it) and `CRAB_PATH_WRAPPERS` pointing here:
+
+```bash
+crab wrappers test --strict
+python -m pytest -q
+```
+
+CI runs these two, after checking that every wrapper loads (`crab wrappers list`). Then open the
+pull request.
+
+- A wrapper with a sample case must not be listed in `unverified.txt`: remove its line. The test
+  `tests/_test_unverified_list.py` fails when the list and the samples disagree, in either
+  direction.
+- A new Blink wrapper is named after the program it launches, and calls `get_path("<name>")` with
+  that name; `tests/_test_blink_names.py` checks it.

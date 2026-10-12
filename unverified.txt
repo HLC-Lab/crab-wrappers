@@ -1,4 +1,4 @@
-# Wrappers that have no sample case yet (samples/<case>/ with real output and expected.json).
+# Wrappers that have no sample case yet (samples/<case>/ with case.json, the output and expected.json).
 # `crab wrappers test --strict` accepts these; remove a line when its wrapper gets a sample.
 blink/allgather_b.py
 blink/allgather_comm_only.py
@@ -36,18 +36,11 @@ blink/scatter_b.py
 blink/scatter_nb.py
 blink/stencil_2d_nb.py
 blink/tagmatch_nb.py
-graph500/g500_wrapper.py
-others/amg.py
 others/dnn-proxies-cosmoflow.py
 others/dnn-proxies-dlrm.py
 others/dnn-proxies-gpt3.py
 others/dnn-proxies-gpt3_moe.py
 others/dnn-proxies-resnet_scal.py
-others/ember-halo3d-26.py
-others/ember-halo3d.py
-others/ember-incast.py
-others/ember-pingpong.py
-others/ember-sweep3d.py
 others/gpubench-a2a-baseline.py
 others/gpubench-a2a-cudaaware.py
 others/gpubench-a2a-nccl.py
@@ -56,8 +49,6 @@ others/gpubench-ar-baseline.py
 others/gpubench-ar-cudaaware.py
 others/gpubench-ar-nccl.py
 others/gpubench-ar-nvlink.py
-others/gpubench-comm-cudaaware.py
-others/gpubench-comm-nccl.py
 others/gpubench-hlo-baseline.py
 others/gpubench-hlo-cudaaware.py
 others/gpubench-hlo-nccl.py
@@ -69,15 +60,8 @@ others/gpubench-mpp-nvlink.py
 others/gpubench-otom-nccl.py
 others/gpubench-pp-baseline.py
 others/gpubench-pp-cudaaware.py
-others/gpubench-pp-nccl.py
 others/gpubench-pp-nvlink.py
 others/ib_send_lat.py
-others/miniFE.py
-others/nccl-allreduce.py
 others/nccl-alltoall.py
 others/nccl-sendrecv.py
 others/netgauge.py
-quantum-espresso/ph/v6.py
-quantum-espresso/ph/v7.py
-quantum-espresso/pw/v6.py
-quantum-espresso/pw/v7.py
