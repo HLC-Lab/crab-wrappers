@@ -1,0 +1,17 @@
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+from _microbench_common import microbench
+
+class app(microbench):
+    metadata = [
+        {'name': 'MainRank-Duration', 'unit': 's', 'conv': True},
+        {'name': 'MainRank-Bandwidth', 'unit': 'Gb/s', 'conv': False}
+    ]
+    table_header = "Time,Bandwidth"
+
+    def get_binary_path(self):
+        return self.get_path("pingpong_b")
+    
+    def get_bench_name(self):
+        return "Ping-Pong"

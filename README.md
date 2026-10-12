@@ -7,7 +7,7 @@ way.
 
 ## Using them
 
-CRAB looks for a config's wrapper `path` (for example `blink/a2a_b.py`) in these folders, in
+CRAB looks for a config's wrapper `path` (for example `blink/alltoall_b.py`) in these folders, in
 this order:
 
 1. `local/wrappers/` inside your CRAB checkout, for private or in-progress wrappers (git-ignored);
