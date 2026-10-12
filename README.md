@@ -34,12 +34,12 @@ checkout. `crab wrappers list` shows what CRAB finds and where each binary comes
 
 A wrapper is verified when at least one sample case covers it: `crab wrappers test <app>` runs
 the wrapper on the saved output and compares the result with `expected.json`. The wrappers
-listed in `unverified.txt` came from CRAB before this repository existed and do not have sample
-cases yet. They work as before, but nothing checks their parsing yet.
+listed in `unverified.txt` do not have sample cases yet, so nothing checks their parsing. Most of
+them came from CRAB before this repository existed and work as before.
 
 | App | Wrappers | Status |
 |---|---|---|
-| `blink` | 26 | unverified |
+| `blink` | 41 (3 need the fork blink-clean) | 4 with samples, 37 unverified |
 | `graph500` | 1 | unverified |
 | `quantum-espresso` | 4 (pw and ph, v6 and v7) | unverified |
 | `others` | 40 | unverified |
