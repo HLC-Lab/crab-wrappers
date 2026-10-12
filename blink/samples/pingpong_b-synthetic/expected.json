@@ -1,14 +1,23 @@
 [
   {
-    "MainRank-Duration": 4.512e-06,
-    "MainRank-Bandwidth": 2.269503546
+    "Avg-Duration": 2.15e-06,
+    "Min-Duration": 2.112e-06,
+    "Max-Duration": 2.188e-06,
+    "Median-Duration": 2.15e-06,
+    "MainRank-Duration": 2.112e-06
   },
   {
-    "MainRank-Duration": 4.498e-06,
-    "MainRank-Bandwidth": 2.276567597
+    "Avg-Duration": 2.12e-06,
+    "Min-Duration": 2.095e-06,
+    "Max-Duration": 2.145e-06,
+    "Median-Duration": 2.12e-06,
+    "MainRank-Duration": 2.145e-06
   },
   {
-    "MainRank-Duration": 4.53e-06,
-    "MainRank-Bandwidth": 2.260485651
+    "Avg-Duration": 2.15e-06,
+    "Min-Duration": 2.13e-06,
+    "Max-Duration": 2.17e-06,
+    "Median-Duration": 2.15e-06,
+    "MainRank-Duration": 2.13e-06
   }
 ]
