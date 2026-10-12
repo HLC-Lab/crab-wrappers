@@ -111,13 +111,12 @@ wrapper.
 
 ## Wrappers that need the fork
 
-Three wrappers do not work with upstream Blink, which has no such programs:
+Two wrappers do not work with upstream Blink, which has no such programs:
 
 | Wrapper | What it is |
 |---|---|
 | `bursty_noise_a2a.py` | bursty all-to-all noise (fork only) |
 | `bursty_noise_incast.py` | bursty incast noise (fork only) |
-| `workerpool.py` | scheduler for the noise workers (fork only); it runs `workerpool_scheduler.py` from `$CRAB_ROOT/benchmarks/workerpool/` |
 
 They need the fork [blink-clean](https://github.com/SharkGamerZ/blink-clean), which builds with a
 Makefile, keeps the old short names for its other programs, and puts its

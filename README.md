@@ -39,7 +39,7 @@ them came from CRAB before this repository existed and work as before.
 
 | App | Wrappers | Status |
 |---|---|---|
-| `blink` | 41 (3 need the fork blink-clean) | 4 with samples, 37 unverified |
+| `blink` | 40 (2 need the fork blink-clean) | 4 with samples, 36 unverified |
 | `graph500` | 1 | unverified |
 | `quantum-espresso` | 4 (pw and ph, v6 and v7) | unverified |
 | `others` | 40 | unverified |

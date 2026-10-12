@@ -59,18 +59,11 @@ UPSTREAM_BINARIES = (
 # Binaries that exist only in the fork blink-clean.
 FORK_ONLY = ("bursty_noise_a2a", "bursty_noise_incast")
 
-# workerpool.py is a helper for the bursty-noise wrappers, not the wrapper of one binary.
-NOT_A_SINGLE_BINARY = ("workerpool",)
-
 GET_PATH = re.compile(r"""get_path\(\s*["']([^"']+)["']\s*\)""")
 
 
 def _wrapper_files():
-    return sorted(
-        p
-        for p in BLINK.glob("*.py")
-        if not p.name.startswith("_") and p.stem not in NOT_A_SINGLE_BINARY
-    )
+    return sorted(p for p in BLINK.glob("*.py") if not p.name.startswith("_"))
 
 
 @pytest.mark.parametrize("name", UPSTREAM_BINARIES)

@@ -36,7 +36,6 @@ blink/scatter_b.py
 blink/scatter_nb.py
 blink/stencil_2d_nb.py
 blink/tagmatch_nb.py
-blink/workerpool.py
 graph500/g500_wrapper.py
 others/amg.py
 others/dnn-proxies-cosmoflow.py
