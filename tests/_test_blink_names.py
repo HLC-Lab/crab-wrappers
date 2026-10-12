@@ -62,10 +62,6 @@ FORK_ONLY = ("bursty_noise_a2a", "bursty_noise_incast")
 # workerpool.py is a helper for the bursty-noise wrappers, not the wrapper of one binary.
 NOT_A_SINGLE_BINARY = ("workerpool",)
 
-# checker.py builds its path by hand from CRAB_ROOT instead of calling get_path, so it is
-# checked on that literal. It is left as it is until it gets a sample.
-HAND_BUILT_PATH = {"checker": "/src/microbench/bin/checker"}
-
 GET_PATH = re.compile(r"""get_path\(\s*["']([^"']+)["']\s*\)""")
 
 
@@ -84,13 +80,7 @@ def test_every_upstream_binary_has_a_wrapper(name):
 
 @pytest.mark.parametrize("path", _wrapper_files(), ids=lambda p: p.stem)
 def test_wrapper_launches_the_binary_it_is_named_after(path):
-    source = path.read_text()
-    if path.stem in HAND_BUILT_PATH:
-        assert HAND_BUILT_PATH[path.stem] in source
-        assert not GET_PATH.findall(source)
-        return
-
-    assert GET_PATH.findall(source) == [path.stem]
+    assert GET_PATH.findall(path.read_text()) == [path.stem]
 
 
 @pytest.mark.parametrize("path", _wrapper_files(), ids=lambda p: p.stem)
