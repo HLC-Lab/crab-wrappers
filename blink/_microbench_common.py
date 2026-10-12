@@ -31,6 +31,11 @@ class microbench(base):
                 return name
             if not os.path.isdir(stored):
                 return os.path.join(os.path.dirname(stored), name)
+        elif os.path.isfile(stored):
+            raise ValueError(
+                "the blink receipt must point at the folder holding the programs "
+                f"(for example build/bin), not at one program: {stored}"
+            )
         return os.path.join(stored, name)
 
     # The CSV header the benchmark prints before its samples (common.h write_results). Its
