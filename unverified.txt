@@ -26,8 +26,6 @@ blink/null_dummy.py
 blink/pairwise_b.py
 blink/pairwise_bsnbr.py
 blink/pairwise_nb.py
-blink/pingpong_b.py
-blink/pingpong_pairwise_b.py
 blink/reduce_b.py
 blink/reduce_nb.py
 blink/reduce_scatter_b.py
