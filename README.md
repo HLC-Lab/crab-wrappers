@@ -15,7 +15,8 @@ this order:
    `wrappers/` folder when that variable is not set.
 
 Clone this repository to one of those places, for example as `wrappers/` inside your CRAB
-checkout. `crab wrappers list` shows what CRAB finds and where each binary comes from.
+checkout. CRAB's `make` clones it into `wrappers/` and `crab update` updates it.
+`crab wrappers list` shows what CRAB finds and where each binary comes from.
 
 ## Layout
 

@@ -18,14 +18,29 @@ Since 2026-05-22 Blink builds with CMake and names its programs after the collec
 MPI or MPICH:
 
 ```bash
-git clone https://github.com/HLC-Lab/blink
-CC=mpicc CXX=mpicxx cmake -S blink -B blink/build -DCMAKE_BUILD_TYPE=Release -DBLINK_TESTS=OFF
-cmake --build blink/build -j
+git clone https://github.com/HLC-Lab/blink ~/blink
+CC=mpicc CXX=mpicxx cmake -S ~/blink -B ~/blink/build -DCMAKE_BUILD_TYPE=Release -DBLINK_TESTS=OFF
+cmake --build ~/blink/build -j
 ```
 
-The programs end up in `blink/build/bin/`. `-DBLINK_TESTS=OFF` skips Blink's own test suite,
-which would download googletest. `crab setup` builds Blink this way. If you built it yourself,
-tell CRAB where the programs are with `crab receipts set blink --binary <path to build/bin>`.
+Clone Blink outside this repository. The programs end up in `~/blink/build/bin/`.
+`-DBLINK_TESTS=OFF` skips Blink's own test suite, which would download googletest.
+
+If CMake's MPI check fails on a module-based cluster, add `-DBLINK_MPI_WRAPPER=ON` (Open MPI
+only) to the first command. That option assumes `CC` and `CXX` are MPI compiler wrappers.
+
+Check a program with `mpirun -n 1 ~/blink/build/bin/alltoall_nb -h`. It prints the flags the
+program accepts.
+
+`crab setup` builds Blink this way in a CRAB whose Blink recipe uses CMake (the CRAB branch
+`fix/blink-names` today). If you built Blink yourself, tell CRAB where the programs are with
+`crab receipts set blink --binary ~/blink/build/bin`. The receipt must be the folder, not one
+program.
+
+If Blink was installed by an older CRAB, the `blink` receipt points at the fork's `bin/`, where
+the new names do not exist. Run `crab setup` again (it offers to clear the old build) or
+`crab receipts set blink --binary <path to build/bin>`. `crab wrappers list` does not check that
+the file exists, so it will not warn you about a stale receipt.
 
 ## Wrapper names
 
@@ -39,22 +54,34 @@ bare file name:
 "path": "blink/alltoall_nb.py"
 ```
 
-Every benchmark takes the same common flags; run one with `-h` for the full list. The ones you
-will use most:
+Every benchmark takes the same common flags, except `null_dummy`, which ignores its arguments.
+Run a program with `-h` for the full list. `tagmatch_nb` accepts the burst flags but does not
+burst. The ones you will use most:
 
 | Flag | Meaning |
 |---|---|
-| `-msgsize <bytes>` | message size in bytes |
-| `-iter <n>` | measured iterations |
-| `-warmup <n>` | warm-up iterations, not measured |
+| `-msgsize <bytes>` | message size in bytes (default 1024) |
+| `-iter <n>` | measured iterations (default 1) |
+| `-warmup <n>` | warm-up iterations, not measured (default 5) |
 | `-endl` | run until stopped instead of for `-iter` iterations |
+| `-maxsamples <n>` | rows kept (default 1000); with a larger `-iter` only the last 1000 measured iterations are reported |
 | `-blength <duration>`, `-bpause <duration>` | burst length and pause between bursts; a bare number is seconds, and the suffixes `s`, `ms`, `us` and `ns` are accepted |
+| `-bldist <exp\|pareto\|lognormal>`, `-bpdist <exp\|pareto\|lognormal>` | draw the burst length or the pause at random with that mean; `-blshape` and `-bpshape` set the shape |
 
-Benchmarks reject arguments they do not know and positional arguments. For example, an
-aggressor that sends short bursts until the victims finish:
+`-h` also lists the flags of a single program. Upstream has them for `pairwise_*` (`-mode`,
+`-offset`), `ring_*` (`-rring`), `kpartners_nb` (`-k`), `stencil_2d_nb` (`-dimx`, `-periodic`)
+and `tagmatch_nb` (`-ntags`, `-sendorder`, `-recvorder`, `-prepost`, `-wildcard`).
+
+Benchmarks reject arguments they do not know and positional arguments. Two things break a run:
+
+- Do not pass `-pretty-print`. The wrapper reads the CSV table, and that flag replaces it.
+- `pingpong_b` needs exactly 2 ranks and `pingpong_pairwise_b` an even number of ranks.
+
+For example, an aggressor that sends 2 MiB messages in 10 ms bursts with a 1 ms pause between
+them, until the victims finish (set `"collect": false, "end": "f"` for it):
 
 ```json
-"args": "-endl -blength 0.0001 -bpause 0.01"
+"args": "-endl -msgsize 2097152 -blength 0.01 -bpause 0.001"
 ```
 
 ## Updating a config that uses the old names
@@ -85,6 +112,16 @@ the new ones:
 | `pw-ping-pong_b` | `pingpong_pairwise_b` |
 
 `ring_bsnbr`, `ring_nb`, `checker` and `null_dummy` keep their names.
+
+Two flags were renamed too:
+
+| Old flag | New flag |
+|---|---|
+| `-bprand` | `-bpdist <exp\|pareto\|lognormal>` (shape `-bpshape`) |
+| `-blrand` | `-bldist <exp\|pareto\|lognormal>` (shape `-blshape`) |
+
+A config that still passes an old flag aborts with "Unknown argument". The `sed` command below
+changes only wrapper names, so fix flags by hand.
 
 To rename the wrappers in a config in place (the original is kept as `config.json.bak`):
 
@@ -119,13 +156,30 @@ Two wrappers do not work with upstream Blink, which has no such programs:
 | `bursty_noise_incast.py` | bursty incast noise (fork only) |
 
 They need the fork [blink-clean](https://github.com/SharkGamerZ/blink-clean), which builds with a
-Makefile, keeps the old short names for its other programs, and puts its
-binaries in `bin/`. Point the `blink` receipt at that `bin/` when you use them.
+Makefile, keeps the old short names for its other programs, and puts its binaries in `bin/`.
+
+Unlike the upstream programs, these two take two positional numbers in seconds,
+`<burst_pause> <burst_length>`. The pause comes first. For example, `"args": "0.001 0.01"` means
+a 1 ms pause and 10 ms bursts. They send 2 MiB per peer, run until they are killed and print no
+table, so use them only with `"collect": false, "end": "f"`.
+
+Upstream has a close equivalent. For all-to-all noise use `alltoall_man` with
+`-endl -msgsize 2097152 -blength <length> -bpause <pause>` (the order of length and pause is
+swapped). For incast noise use `incast_nb` with the same flags. It is close but not identical:
+it synchronizes every iteration.
+
+Every Blink wrapper uses the `blink` receipt, so there is one folder per install. To use a
+fork-only program next to upstream ones, copy the fork binaries into the upstream `build/bin`,
+or give that one app a `"binary": "/path/to/blink-clean/bin/bursty_noise_a2a"` key in the
+config. CRAB checks that key before the receipt.
 
 ## Samples
 
 `samples/` holds the output the wrappers are checked against (`crab wrappers test blink`). Four
 wrappers have samples: `alltoall_b`, `allreduce_b`, `pingpong_b` and `pingpong_pairwise_b`.
+
+The three Leonardo samples were run with the fork's `a2a_b` and `ardc_b` before the rename. The
+table format is the same as upstream's. No sample comes from a CMake-built Blink yet.
 
 | Sample | Source |
 |---|---|
