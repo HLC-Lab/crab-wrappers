@@ -2,7 +2,7 @@
 
 [Blink](https://github.com/HLC-Lab/blink) is a suite of MPI microbenchmarks for measuring how a
 network behaves under different traffic patterns: collectives, incast, pairwise and ring
-exchanges, ping-pong, and bursty background noise. Each benchmark runs a number of iterations
+exchanges, and ping-pong. Each benchmark runs a number of iterations
 (or until it is stopped) and prints one row per iteration.
 
 Each wrapper here launches one Blink program and reads its table: one row per measured
@@ -44,14 +44,36 @@ the file exists, so it will not warn you about a stale receipt.
 
 ## Wrapper names
 
-A wrapper `blink/<name>.py` launches the Blink program `<name>`: the names are the same. The test
-`tests/_test_blink_names.py` checks it, so a wrapper cannot drift from the program it runs.
+A wrapper `blink/<group>/<name>.py` launches the Blink program `<name>`: the names are the same,
+and `<group>` is the folder of Blink's `src/` that holds the program's source. The test
+`tests/_test_blink_names.py` checks both, so a wrapper cannot drift from the program it runs or
+from the upstream layout.
 
-In a config, the wrapper path includes the folder, because CRAB does not search subfolders for a
-bare file name:
+| Folder | Wrappers |
+|---|---|
+| `allgather/` | `allgather_b`, `allgather_comm_only`, `allgather_nb` |
+| `allreduce/` | `allreduce_b`, `allreduce_nb` |
+| `alltoall/` | `alltoall_b`, `alltoall_comm_only`, `alltoall_man`, `alltoall_nb` |
+| `barrier/` | `barrier_b`, `barrier_nb` |
+| `broadcast/` | `broadcast_b`, `broadcast_nb` |
+| `gather/` | `gather_b`, `gather_nb` |
+| `incast/` | `incast_b`, `incast_bsnbr`, `incast_get`, `incast_nb`, `incast_put` |
+| `kpartners/` | `kpartners_nb` |
+| `pairwise/` | `pairwise_b`, `pairwise_bsnbr`, `pairwise_nb` |
+| `pingpong/` | `pingpong_b`, `pingpong_pairwise_b` |
+| `reduce/` | `reduce_b`, `reduce_nb` |
+| `reduce_scatter/` | `reduce_scatter_b`, `reduce_scatter_nb` |
+| `ring/` | `ring_bsnbr`, `ring_nb` |
+| `scatter/` | `scatter_b`, `scatter_nb` |
+| `stencil/` | `stencil_2d_nb` |
+| `tagmatch/` | `tagmatch_nb` |
+| `tools/` | `checker`, `null_dummy` |
+
+In a config, the wrapper path includes both folders, because CRAB does not search subfolders for
+a bare file name:
 
 ```json
-"path": "blink/alltoall_nb.py"
+"path": "blink/alltoall/alltoall_nb.py"
 ```
 
 Every benchmark takes the same common flags, except `null_dummy`, which ignores its arguments.
@@ -111,7 +133,8 @@ the new ones:
 | `ping-pong_b` | `pingpong_b` |
 | `pw-ping-pong_b` | `pingpong_pairwise_b` |
 
-`ring_bsnbr`, `ring_nb`, `checker` and `null_dummy` keep their names.
+`ring_bsnbr`, `ring_nb`, `checker` and `null_dummy` keep their names. Every new name sits in a
+folder (see the table above), so the new path is `blink/<group>/<name>.py`.
 
 Two flags were renamed too:
 
@@ -123,19 +146,20 @@ Two flags were renamed too:
 A config that still passes an old flag aborts with "Unknown argument". The `sed` command below
 changes only wrapper names, so fix flags by hand.
 
-To rename the wrappers in a config in place (the original is kept as `config.json.bak`):
+The `sed` command below goes from the old names straight to the new paths. To rename the
+wrappers in a config in place (the original is kept as `config.json.bak`):
 
 ```bash
 sed -E -i.bak \
-  -e 's#\bpw-ping-pong_b\.py#pingpong_pairwise_b.py#g' \
-  -e 's#\bping-pong_b\.py#pingpong_b.py#g' \
-  -e 's#\ba2a_(b|nb|comm_only|man)\.py#alltoall_\1.py#g' \
-  -e 's#\bagtr_comm_only\.py#allgather_comm_only.py#g' \
-  -e 's#\bardc_(b|nb)\.py#allreduce_\1.py#g' \
-  -e 's#\bbdc_(b|nb)\.py#broadcast_\1.py#g' \
-  -e 's#\bbarrier\.py#barrier_b.py#g' \
-  -e 's#\binc_(b|bsnbr|get|nb|put)\.py#incast_\1.py#g' \
-  -e 's#\bo2o_(bsnbr|nb)\.py#pairwise_\1.py#g' \
+  -e 's#\bpw-ping-pong_b\.py#pingpong/pingpong_pairwise_b.py#g' \
+  -e 's#\bping-pong_b\.py#pingpong/pingpong_b.py#g' \
+  -e 's#\ba2a_(b|nb|comm_only|man)\.py#alltoall/alltoall_\1.py#g' \
+  -e 's#\bagtr_comm_only\.py#allgather/allgather_comm_only.py#g' \
+  -e 's#\bardc_(b|nb)\.py#allreduce/allreduce_\1.py#g' \
+  -e 's#\bbdc_(b|nb)\.py#broadcast/broadcast_\1.py#g' \
+  -e 's#\bbarrier\.py#barrier/barrier_b.py#g' \
+  -e 's#\binc_(b|bsnbr|get|nb|put)\.py#incast/incast_\1.py#g' \
+  -e 's#\bo2o_(bsnbr|nb)\.py#pairwise/pairwise_\1.py#g' \
   config.json
 ```
 
@@ -146,37 +170,22 @@ hand.
 Blink's `pingpong_b` prints the same five durations as the other benchmarks, and so does the
 wrapper.
 
-## Wrappers that need the fork
+## Bursty noise wrappers are gone
 
-Two wrappers do not work with upstream Blink, which has no such programs:
-
-| Wrapper | What it is |
-|---|---|
-| `bursty_noise_a2a.py` | bursty all-to-all noise (fork only) |
-| `bursty_noise_incast.py` | bursty incast noise (fork only) |
-
-They need the fork [blink-clean](https://github.com/SharkGamerZ/blink-clean), which builds with a
-Makefile, keeps the old short names for its other programs, and puts its binaries in `bin/`.
-
-Unlike the upstream programs, these two take two positional numbers in seconds,
-`<burst_pause> <burst_length>`. The pause comes first. For example, `"args": "0.001 0.01"` means
-a 1 ms pause and 10 ms bursts. They send 2 MiB per peer, run until they are killed and print no
-table, so use them only with `"collect": false, "end": "f"`.
-
-Upstream has a close equivalent. For all-to-all noise use `alltoall_man` with
-`-endl -msgsize 2097152 -blength <length> -bpause <pause>` (the order of length and pause is
-swapped). For incast noise use `incast_nb` with the same flags. It is close but not identical:
-it synchronizes every iteration.
-
-Every Blink wrapper uses the `blink` receipt, so there is one folder per install. To use a
-fork-only program next to upstream ones, copy the fork binaries into the upstream `build/bin`,
-or give that one app a `"binary": "/path/to/blink-clean/bin/bursty_noise_a2a"` key in the
-config. CRAB checks that key before the receipt.
+`bursty_noise_a2a` and `bursty_noise_incast` came from the fork
+[blink-clean](https://github.com/SharkGamerZ/blink-clean); upstream Blink removed those programs,
+so the wrappers are removed too. Upstream produces the same traffic with its normal benchmarks and
+the burst flags: for all-to-all noise use `alltoall/alltoall_nb.py`, for incast noise use
+`incast/incast_nb.py`, both with `-endl -blength <length> -bpause <pause>` (and `-msgsize`; the old
+programs sent 2 MiB per peer, so `-msgsize 2097152`). Set `"collect": false, "end": "f"` for the
+app, as before. The old programs took the pause first and the length second as bare positional
+numbers; the new flags take them by name, and a bare number is seconds.
 
 ## Samples
 
-`samples/` holds the output the wrappers are checked against (`crab wrappers test blink`). Four
-wrappers have samples: `alltoall_b`, `allreduce_b`, `pingpong_b` and `pingpong_pairwise_b`.
+`samples/` holds the output the wrappers are checked against (`crab wrappers test blink`). It
+stays flat; a `case.json` names its wrapper as `<group>/<name>.py`. Four wrappers have samples:
+`alltoall_b`, `allreduce_b`, `pingpong_b` and `pingpong_pairwise_b`.
 
 The three Leonardo samples were run with the fork's `a2a_b` and `ardc_b` before the rename. The
 table format is the same as upstream's. No sample comes from a CMake-built Blink yet.

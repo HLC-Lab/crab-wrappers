@@ -92,16 +92,16 @@ def test_blink_directory_receipt_runs_each_microbench_from_it(install_type, tmp_
     a2a = _executable(bindir / "alltoall_b")
     receipts("blink", install_type, str(bindir))
 
-    assert _load("blink/pingpong_b.py").resolve_binary() == ping
-    assert _load("blink/alltoall_b.py").resolve_binary() == a2a
+    assert _load("blink/pingpong/pingpong_b.py").resolve_binary() == ping
+    assert _load("blink/alltoall/alltoall_b.py").resolve_binary() == a2a
 
 
 @pytest.mark.parametrize("typed", ["pingpong_b", "blink"])
 def test_blink_module_receipt_with_a_command_name_runs_bare_microbench_names(typed, receipts):
     receipts("blink", "module", typed)
 
-    assert _load("blink/pingpong_b.py").resolve_binary() == "pingpong_b"
-    assert _load("blink/alltoall_b.py").resolve_binary() == "alltoall_b"
+    assert _load("blink/pingpong/pingpong_b.py").resolve_binary() == "pingpong_b"
+    assert _load("blink/alltoall/alltoall_b.py").resolve_binary() == "alltoall_b"
 
 
 def test_blink_module_receipt_with_a_path_finds_each_microbench_beside_it(tmp_path, receipts):
@@ -110,8 +110,8 @@ def test_blink_module_receipt_with_a_path_finds_each_microbench_beside_it(tmp_pa
     a2a = _executable(bindir / "alltoall_b")
     receipts("blink", "module", ping)
 
-    assert _load("blink/pingpong_b.py").resolve_binary() == ping
-    assert _load("blink/alltoall_b.py").resolve_binary() == a2a
+    assert _load("blink/pingpong/pingpong_b.py").resolve_binary() == ping
+    assert _load("blink/alltoall/alltoall_b.py").resolve_binary() == a2a
 
 
 def test_blink_module_receipt_with_a_directory_runs_each_microbench_from_it(tmp_path, receipts):
@@ -119,7 +119,7 @@ def test_blink_module_receipt_with_a_directory_runs_each_microbench_from_it(tmp_
     a2a = _executable(bindir / "alltoall_b")
     receipts("blink", "module", str(bindir))
 
-    assert _load("blink/alltoall_b.py").resolve_binary() == a2a
+    assert _load("blink/alltoall/alltoall_b.py").resolve_binary() == a2a
 
 
 @pytest.mark.parametrize("install_type", ["source", "binary"])
@@ -128,4 +128,4 @@ def test_blink_receipt_pointing_at_one_program_asks_for_the_folder(install_type,
     receipts("blink", install_type, ping)
 
     with pytest.raises(ValueError, match="folder"):
-        _load("blink/alltoall_b.py").resolve_binary()
+        _load("blink/alltoall/alltoall_b.py").resolve_binary()
