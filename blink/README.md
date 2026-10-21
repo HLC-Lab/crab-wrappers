@@ -90,6 +90,10 @@ burst. The ones you will use most:
 | `-blength <duration>`, `-bpause <duration>` | burst length and pause between bursts; a bare number is seconds, and the suffixes `s`, `ms`, `us` and `ns` are accepted |
 | `-bldist <exp\|pareto\|lognormal>`, `-bpdist <exp\|pareto\|lognormal>` | draw the burst length or the pause at random with that mean; `-blshape` and `-bpshape` set the shape |
 
+CRAB fills the `msg_size` column of the results from the `-msgsize` value in the app's args. When
+the args have no `-msgsize`, it writes 0 even though Blink then runs with its default of 1024
+bytes, so always pass `-msgsize` explicitly.
+
 `-h` also lists the flags of a single program. Upstream has them for `pairwise_*` (`-mode`,
 `-offset`), `ring_*` (`-rring`), `kpartners_nb` (`-k`), `stencil_2d_nb` (`-dimx`, `-periodic`)
 and `tagmatch_nb` (`-ntags`, `-sendorder`, `-recvorder`, `-prepost`, `-wildcard`).
