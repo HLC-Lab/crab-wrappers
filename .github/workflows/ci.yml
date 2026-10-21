@@ -13,7 +13,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install CRAB
-        run: pip install "crab @ git+https://github.com/HLC-Lab/CRAB.git@feature/web-dashboard"
+        run: pip install "git+https://github.com/HLC-Lab/CRAB.git@develop"
       - name: Every wrapper loads
         run: |
           CRAB_PATH_WRAPPERS="$PWD" crab wrappers list --json > wrappers.json
