@@ -50,8 +50,8 @@ class app(base):
             raise ValueError(f"graph500 output has {len(lines)} non-empty lines, expected at least 22 (the run did not finish?)")
         lines = lines[4:15]+lines[-7:]
         lines = ([lines[0]]+lines[2:])
-        data = [[float(x.split(' ')[-1])] for x in lines]
-        return data
+        names = [m['name'] for m in self.metadata]
+        return [dict(zip(names, [float(x.split(' ')[-1]) for x in lines]))]
 
     def get_bench_name(self):
         return "Graph500"

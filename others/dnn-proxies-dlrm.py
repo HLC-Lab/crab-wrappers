@@ -13,7 +13,8 @@ class app(base):
         output = self.stdout
         lines = output.split('\n')
         outline = lines[-2]
-        return [[float(outline.split(" ")[-2])]]
+        names = [m['name'] for m in self.metadata]
+        return [dict(zip(names, [float(outline.split(" ")[-2])]))]
 
     def get_bench_name(self):
         return "DLRM Proxy"

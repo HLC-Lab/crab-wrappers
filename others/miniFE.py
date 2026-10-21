@@ -21,7 +21,7 @@ class app(base):
         else:
             return os.environ[env_name]
 
-    def read_data(self):  # return list (size num_metrics) of variable size lists
+    def read_data(self):  # return rows: one dict per sample, keyed by metric name
         # miniFE writes its report, miniFE.<size>.P<procs>.<date>.yaml, into its working
         # directory, which is this run's run_dir (the runner cleans it up).
         reports = sorted(glob.glob(os.path.join(glob.escape(self.run_dir), "miniFE*.yaml")))
@@ -35,7 +35,8 @@ class app(base):
         if len(lines) < 62:
             raise ValueError(f"{os.path.basename(reports[0])} has {len(lines)} lines, expected at least 62")
         idxs = [28, 30, 45, 48, 51, 55, 58, 61]
-        return [[float(lines[idx].split(' ')[-1])] for idx in idxs]
+        names = [m['name'] for m in self.metadata]
+        return [dict(zip(names, [float(lines[idx].split(' ')[-1]) for idx in idxs]))]
 
     def get_bench_name(self):
         return "MiniFE"

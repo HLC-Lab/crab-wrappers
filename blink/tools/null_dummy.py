@@ -9,7 +9,7 @@ class app(microbench):
     def get_binary_path(self):
         return self.get_path("null_dummy")
     
-    def read_data(self):  # return list (size num_metrics) of variable size lists
+    def read_data(self):  # no metrics, so no rows
         data_list = []
         return data_list
     

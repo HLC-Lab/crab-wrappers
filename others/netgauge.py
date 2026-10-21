@@ -11,19 +11,19 @@ class app(base):
         return os.environ["CRAB_ROOT"] + "/src/netgauge-2.4.6/netgauge"
     
     # how to extract the data
-    # Returns a list (one element per metric) of lists (one element per measurement) of values
+    # Returns rows: one dict per measurement, keyed by metric name
     def read_data(self):  
         out_string = self.stdout
         out_lines = out_string.split('\n')
-        data = [[], []]
+        names = [m['name'] for m in self.metadata]
+        rows = []
         for line in out_lines[2:-4]:
             data_string = line.split(':')[-1]
             data_list = data_string.split(' ')
             data1 = float(data_list[1])
             data2 = float(data_list[3][1:])
-            data[0] += [data1]
-            data[1] += [data2]
-        return data
+            rows.append(dict(zip(names, [data1, data2])))
+        return rows
 
     def get_bench_name(self):
         return "Netgauge - EBB"

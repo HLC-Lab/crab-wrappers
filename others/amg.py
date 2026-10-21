@@ -21,15 +21,15 @@ class app(base):
         else:
             return os.environ[env_name]
 
-    def read_data(self):  # return list (size num_metrics) of variable size lists
+    def read_data(self):  # return rows: one dict per sample, keyed by metric name
         lines = self.stdout.split('\n')
         if len(lines) < 45:
             raise ValueError(f"AMG output has {len(lines)} lines, expected at least 45 (the run did not finish?)")
         lines = lines[11], lines[22], lines[31], lines[44]
         data = [float(x.split(' ')[-2]) for x in lines]
         data += [sum(data)]
-        data = [[x] for x in data]
-        return data
+        names = [m['name'] for m in self.metadata]
+        return [dict(zip(names, data))]
 
     def get_bench_name(self):
         return "AMG"

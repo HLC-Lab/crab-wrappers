@@ -33,7 +33,7 @@ class app(base):
         ]
         return "bash -c " + shlex.quote(" ".join(launches) + " wait")
 
-    def read_data(self):  # return list (size num_metrics) of variable size lists
+    def read_data(self):  # return rows: one dict per sample, keyed by metric name
         files = [os.path.join(self.run_dir, f"ib_send_lat{i}") for i in range(len(ib_devices()))]
 
         samples = []
@@ -59,8 +59,8 @@ class app(base):
             samples += [samples_rank]
 
         # Use zip(*samples) to avoid IndexError when devices have unequal sample counts
-        samples_max = [max(row) for row in zip(*samples)]
-        return [samples_max]
+        names = [m['name'] for m in self.metadata]
+        return [dict(zip(names, [max(row)])) for row in zip(*samples)]
 
     def get_bench_name(self):
         return "ib_send_lat"

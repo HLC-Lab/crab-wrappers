@@ -24,8 +24,8 @@ class gpubench(base):
         if not lines:
             raise ValueError("no 'Iteration' lines in the output (the run did not finish?)")
         tmp_data = [[float(x.split(',')[1].split(':')[1]), float(x.split(',')[2].split(':')[1])] for x in lines]
-        data = [list(x) for x in zip(*tmp_data)]
-        return data
+        names = [m['name'] for m in self.metadata]
+        return [dict(zip(names, row)) for row in tmp_data]
 
     def get_bench_input(self):
         args_fields = self.args.split(" ")

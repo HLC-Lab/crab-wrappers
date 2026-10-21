@@ -10,7 +10,7 @@ class ncclbase(base):
         {'name': 'busbw-ip' , 'unit': 'GB/s', 'conv': False}  # Bus Bandwidth (in-place)
     ]
 
-    def read_data(self):  # return list (size num_metrics) of variable size lists
+    def read_data(self):  # return rows: one dict per sample, keyed by metric name
         output = self.stdout
         rows = []
         for l in output.split('\n'):
@@ -29,8 +29,8 @@ class ncclbase(base):
         if not rows:
             raise ValueError("no result rows in the nccl-tests output (the run did not finish?)")
 
-        # Transpose: N rows × 6 columns → 6 per-metric value lists
-        return [[row[i] for row in rows] for i in range(len(self.metadata))]
+        names = [m['name'] for m in self.metadata]
+        return [dict(zip(names, row)) for row in rows]
     
     def get_bench_input(self):
         if "-b" not in self.args or "-e" not in self.args:
