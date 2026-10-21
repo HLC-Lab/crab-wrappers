@@ -15,8 +15,28 @@ folders, in this order:
    `wrappers/` folder when that variable is not set.
 
 Clone this repository to one of those places, for example as `wrappers/` inside your CRAB
-checkout. CRAB's `make` clones it into `wrappers/` and `crab update` updates it.
-`crab wrappers list` shows what CRAB finds and where each binary comes from.
+checkout. CRAB's `make` clones it into `wrappers/` and `crab update` updates it. A CRAB installed
+with pip or pipx has no checkout: it clones this repository on first use, and `crab update`
+keeps that clone current. `crab wrappers list` shows what CRAB finds and where each binary comes
+from.
+
+## The contract
+
+A wrapper's `read_data()` returns rows: a list of dicts, one per sample, keyed by the metric
+names plus any key columns (for example the message size of a sweep). The older shape, one list
+of values per metric, is an error in CRAB 1.0: a run that returns it fails, and every wrapper in
+this repository was migrated to rows. This is wrapper contract version 1, which CRAB reports as
+`wrapper_api = 1`. The full guide is CRAB's
+[Writing a wrapper](https://hlc-crab.readthedocs.io/extending/wrappers/) page, and
+[CONTRIBUTING.md](CONTRIBUTING.md) lists the steps for adding one here.
+
+## Versions
+
+From CRAB 1.0, each CRAB release has a matching tag of this repository, named `vX.Y.Z` after the
+CRAB version (the first, `v1.0.0`, is made at the 1.0 release). `crab update` puts the clone on
+the tag that matches the installed CRAB, so the wrappers and the CRAB that runs them stay in step.
+`crab update --head` follows `main` instead, for wrappers that are newer than your release. When
+the repository has no tag for your CRAB version yet, an existing clone stays where it is.
 
 ## Layout
 

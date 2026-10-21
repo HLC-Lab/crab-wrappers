@@ -16,7 +16,9 @@ Use `--local` to create it in your CRAB checkout's `local/wrappers/` while it is
 
 ## 2. Write the wrapper
 
-The wrapper is a class named `app` that subclasses `crab.wrappers.base.base`:
+The wrapper is a class named `app` that subclasses `crab.wrappers.base.base`. It implements
+wrapper contract version 1 (`wrapper_api = 1` in CRAB); the full description is CRAB's
+[Writing a wrapper](https://hlc-crab.readthedocs.io/extending/wrappers/) page.
 
 - `executable`: the program name CRAB looks up on `PATH` when neither the config's `binary` key
   nor a receipt gives a path.
@@ -28,7 +30,8 @@ The wrapper is a class named `app` that subclasses `crab.wrappers.base.base`:
 - `keys`: names of sweep dimensions every row carries, for example `["size"]` when one run prints
   results for several message sizes. Leave it empty when a run gives single values.
 - `read_data()`: return a list of rows, one dict per sample, holding every key and every metric
-  and nothing else. The application's output is in `self.stdout` and `self.stderr`, and files it
+  and nothing else. The old shape, one list of values per metric, is an error in CRAB 1.0. The
+  application's output is in `self.stdout` and `self.stderr`, and files it
   wrote are in `self.run_dir`.
 - `get_extra_artifacts()` (optional): paths or glob patterns, relative to `self.run_dir`, of
   files to keep with the results.
@@ -60,12 +63,13 @@ crab parse myapp/myapp.py myapp/samples/<case>/stdout.txt --check myapp/samples/
 
 ## 4. Open a pull request
 
-Run both checks from a CRAB checkout that uses this repository, with the CRAB package installed
-(the tests import it) and `CRAB_PATH_WRAPPERS` pointing here:
+Run both checks with the CRAB package installed (the tests import it) and `CRAB_PATH_WRAPPERS`
+pointing at your clone of this repository, from a CRAB checkout or from any install:
 
 ```bash
+export CRAB_PATH_WRAPPERS=/path/to/crab-wrappers
 crab wrappers test --strict
-python -m pytest -q
+python -m pytest -q          # from the root of this repository
 ```
 
 CI runs these two, after checking that every wrapper loads (`crab wrappers list`). Then open the
@@ -76,3 +80,6 @@ pull request.
   direction.
 - A new Blink wrapper is named after the program it launches, and calls `get_path("<name>")` with
   that name; `tests/_test_blink_names.py` checks it.
+
+Each CRAB release has a matching tag `vX.Y.Z` of this repository, which `crab update` checks out
+for users on a release. Your pull request goes to `main`.
