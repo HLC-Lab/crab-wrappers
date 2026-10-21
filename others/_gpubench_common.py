@@ -9,7 +9,7 @@ class gpubench(base):
 
     def get_path(self, name):
         p = ""
-        sys = os.environ["CRAB_SYSTEM"]
+        sys = os.environ.get("CRAB_SYSTEM", "")
         if "CudaAware" in name and (sys == "alps" or sys == "lumi"):
             p += os.environ["CRAB_ROOT"] + "/src/microbench-gpu/select_gpu_" + sys + " "
         elif "CudaAware" in name and (sys == "leonardo"):
