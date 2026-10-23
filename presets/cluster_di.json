@@ -1,0 +1,12 @@
+{
+    "cluster_di": {
+        "description": "Cluster Dipartimento Informatica",
+        "scheduler": "slurm",
+        "launcher": "srun",
+        "launchers": {
+            "srun": {
+                "flags": []
+            }
+        }
+    }
+}

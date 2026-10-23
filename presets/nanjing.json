@@ -1,0 +1,17 @@
+{
+    "nanjing": {
+        "description": "Nanjin Cluster",
+        "scheduler": "slurm",
+        "launcher": "srun",
+        "launchers": {
+            "srun": {
+                "flags": [
+                    "--cpu-bind=socket"
+                ]
+            }
+        },
+        "env": {
+            "CRAB_IB_DEVICES": "mlx5_0#mlx5_1#mlx5_2#mlx5_3"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "alps": {
+        "description": "ALPS Cluster Environment",
+        "scheduler": "slurm",
+        "launcher": "srun",
+        "launchers": {
+            "srun": {
+                "flags": [
+                    "--cpu-bind=map_cpu=1,73,145,217"
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "lumi": {
+        "description": "LUMI Supercomputer",
+        "scheduler": "slurm",
+        "launcher": "srun",
+        "launchers": {
+            "srun": {
+                "flags": []
+            }
+        }
+    }
+}

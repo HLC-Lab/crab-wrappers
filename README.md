@@ -20,6 +20,21 @@ with pip or pipx has no checkout: it clones this repository on first use, and `c
 keeps that clone current. `crab wrappers list` shows what CRAB finds and where each binary comes
 from.
 
+## Presets
+
+A preset describes one cluster for CRAB: its scheduler, launcher, launcher flags, environment
+variables and the Slurm directives every job needs. They live in `presets/<cluster>.json`, one
+file per cluster (a file may hold several variants of it).
+
+CRAB reads them from this clone, so they follow the same tag pin and `crab update` as the
+wrappers. Presets carry no per-user values. A value only you know, such as your Slurm account, is
+written as a mark like `--account=<YOUR_ACCOUNT>`, and you give it a value in a file of your own in
+CRAB's overrides directory, which patches the shared preset. `crab presets show <name>` prints the
+resolved preset, where each value comes from, which marks are still unset and the snippet to paste
+into your override file. The full description is the Presets page of
+[CRAB's documentation](https://hlc-crab.readthedocs.io/using/presets/), and
+[CONTRIBUTING.md](CONTRIBUTING.md) has the rules for adding one here.
+
 ## The contract
 
 A wrapper's `read_data()` returns rows: a list of dicts, one per sample, keyed by the metric
@@ -41,6 +56,8 @@ the repository has no tag for your CRAB version yet, an existing clone stays whe
 ## Layout
 
 ```
+presets/
+  <cluster>.json        the presets of one cluster: {"<name>": {...}}
 <app>/
   <wrapper>.py          one or more wrappers for the application
   _<helper>.py          shared code for that app's wrappers (not a wrapper itself)

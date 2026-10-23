@@ -1,0 +1,30 @@
+{
+    "slimfly": {
+        "description": "Slimfly Topology Cluster (MPI)",
+        "scheduler": "slurm",
+        "launcher": "mpirun",
+        "launchers": {
+            "mpirun": {
+                "command": "<YOUR_OPENMPI_DIR>/bin/mpirun",
+                "flags": [
+                    "-mca",
+                    "plm_rsh_no_tree_spawn",
+                    "1",
+                    "--map-by",
+                    "node",
+                    "-mca",
+                    "btl",
+                    "openib,self,sm",
+                    "-mca",
+                    "btl_openib_if_include",
+                    "mlx4_0",
+                    "-mca",
+                    "orte_base_help_aggregate",
+                    "0",
+                    "--map-by",
+                    "node"
+                ]
+            }
+        }
+    }
+}

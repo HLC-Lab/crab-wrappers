@@ -1,4 +1,4 @@
-# Contributing a wrapper
+# Contributing
 
 A wrapper is shared by everyone who runs the same application, so the bar is: it parses real
 output correctly, and a test proves it.
@@ -83,3 +83,38 @@ pull request.
 
 Each CRAB release has a matching tag `vX.Y.Z` of this repository, which `crab update` checks out
 for users on a release. Your pull request goes to `main`.
+
+## Presets
+
+A preset describes one cluster, so it is shared by everyone who uses that cluster. It lives in
+`presets/<cluster>.json` as a JSON object of presets, `{"<name>": {...}}`, in the format of CRAB's
+[presets reference](https://hlc-crab.readthedocs.io/reference/presets/). One file may hold several
+variants of a cluster. A preset name appears in one file only.
+
+Rules, which `tests/_test_presets.py` checks:
+
+- Use long `sbatch` options only: `--account=...`, not `-A ...`. A user's override replaces a
+  shared item by its `--name=` prefix, so a short form could not be patched.
+- A value that only the user knows is a mark, `<YOUR_NAME>` (capital letters, digits and
+  underscores), for example `--account=<YOUR_ACCOUNT>`. A mark goes only in an env value, in a
+  `--name=<YOUR_NAME>` flag item (sbatch or launcher) or in the launcher `command`. Never put one
+  in a `header` line, which an override cannot patch by key.
+- A choice the cluster offers, such as a partition or GPU versus CPU nodes, is a variant preset
+  with `"extends": "<name>"` that sets only what differs.
+- A gotcha of the cluster (a `--gres=tmpfs:0` option, an InfiniBand service level) goes into the
+  preset itself, so nobody has to remember it.
+- A user's own environment (their UCX or OpenMPI build, a venv, modules, a QoS) is not a preset
+  field. CRAB's documentation covers it once, for every preset.
+- `notes`, when present, is a list of at most 3 entries, each a single line. Use it only for what
+  the other rules cannot express.
+- No `_common` key: put the environment in each preset.
+
+Check a preset by hand with:
+
+```bash
+export CRAB_PATH_WRAPPERS=$PWD
+crab presets show <name>     # the resolved preset, its sources, and what is still unset
+python -m pytest -q          # includes tests/_test_presets.py
+```
+
+CI runs the tests with CRAB installed from its `develop` branch, so every preset must load there.

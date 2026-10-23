@@ -1,0 +1,24 @@
+{
+    "cresco8": {
+        "description": "Cresco8 @ ENEA",
+        "scheduler": "slurm",
+        "launcher": "srun",
+        "launchers": {
+            "srun": {
+                "flags": [
+                    "--cpu-bind=socket"
+                ]
+            }
+        },
+        "env": {
+            "LD_LIBRARY_PATH": "${LD_LIBRARY_PATH}:/usr/mpi/intel/openmpi-4.1.7rc1/lib",
+            "CRAB_IB_DEVICES": "mlx5_0#mlx5_1#mlx5_2#mlx5_3"
+        },
+        "sbatch": [
+            "--account=<YOUR_ACCOUNT>",
+            "--partition=cresco8_cpu",
+            "--auks=yes",
+            "--exclusive"
+        ]
+    }
+}
