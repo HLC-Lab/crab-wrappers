@@ -6,7 +6,7 @@
         "launchers": {
             "srun": {
                 "flags": [
-                    "--cpu-bind=socket"
+                    "--cpu-bind=verbose,socket"
                 ]
             }
         },
