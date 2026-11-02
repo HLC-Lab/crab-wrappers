@@ -29,6 +29,9 @@ wrapper contract version 1 (`wrapper_api = 1` in CRAB); the full description is 
   verdict, where false fails the run.
 - `keys`: names of sweep dimensions every row carries, for example `["size"]` when one run prints
   results for several message sizes. Leave it empty when a run gives single values.
+- `default_msg_size` (optional): the message size the program uses when `-msgsize` is absent from
+  its arguments. CRAB records it in the `msg_size` column of the results CSV. Leave it at 0 for a
+  program without a message size.
 - `read_data()`: return a list of rows, one dict per sample, holding every key and every metric
   and nothing else. The old shape, one list of values per metric, is an error in CRAB 1.0. The
   application's output is in `self.stdout` and `self.stderr`, and files it
