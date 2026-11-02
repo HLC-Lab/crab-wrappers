@@ -8,6 +8,9 @@ class microbench(base):
     def benchmark_id(self) -> str:
         return "blink"
 
+    # Blink's own default for -msgsize; programs that ignore the size override it with 0.
+    default_msg_size = 1024
+
     metadata = [
         {'name': 'Avg-Duration'     , 'unit': 's', 'conv': True }, 
         {'name': 'Min-Duration'     , 'unit': 's', 'conv': False},

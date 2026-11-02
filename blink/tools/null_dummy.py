@@ -4,6 +4,9 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from _microbench_common import microbench
 
 class app(microbench):
+    # The program ignores every argument, -msgsize included.
+    default_msg_size = 0
+
     metadata = []
     
     def get_binary_path(self):
