@@ -1,0 +1,1 @@
+{"wrapper": "alltoall/alltoall_comm_only.py", "args": "-msgsize 1048576 -iter 50 -warmup 5 -grty 1 -gpu", "source": "leonardo", "note": "Leonardo booster, 1 node x 4 ranks (one GPU and its nearest NIC per rank), Open MPI 4.1.6 with CUDA 12.2, Blink 80e74b1e built with -DBLINK_GPU=CUDA, captured 2026-11-02; stderr holds the GPU mode line"}

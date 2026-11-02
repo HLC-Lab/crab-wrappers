@@ -188,17 +188,19 @@ numbers; the new flags take them by name, and a bare number is seconds.
 ## Samples
 
 `samples/` holds the output the wrappers are checked against (`crab wrappers test blink`). It
-stays flat; a `case.json` names its wrapper as `<group>/<name>.py`. Four wrappers have samples:
-`alltoall_b`, `allreduce_b`, `pingpong_b` and `pingpong_pairwise_b`.
+stays flat; a `case.json` names its wrapper as `<group>/<name>.py`. Five wrappers have samples:
+`alltoall_b`, `alltoall_comm_only`, `allreduce_b`, `pingpong_b` and `pingpong_pairwise_b`.
 
-The three Leonardo samples were run with the fork's `a2a_b` and `ardc_b` before the rename. The
-table format is the same as upstream's. No sample comes from a CMake-built Blink yet.
+The three Leonardo samples with `_b` in their name were run with the fork's `a2a_b` and `ardc_b`
+before the rename. The table format is the same as upstream's. One sample, the GPU all-to-all,
+comes from a CMake-built Blink (commit `80e74b1e`, built with `-DBLINK_GPU=CUDA`).
 
 | Sample | Source |
 |---|---|
 | `samples/leonardo-alltoall_b-1KiB` | Leonardo booster, 2 nodes x 16 ranks, Open MPI 4.1.6, captured 2026-10-07 with the CRAB sample kit |
 | `samples/leonardo-alltoall_b-1MiB` | same run setup, 1 MiB messages |
 | `samples/leonardo-allreduce_b-4KiB` | same run setup, `allreduce_b` with 4 KiB messages |
+| `samples/leonardo-alltoall_comm_only-gpu-1MiB` | Leonardo booster, 1 node x 4 ranks (one GPU and its nearest NIC per rank), Open MPI 4.1.6 with CUDA 12.2, captured 2026-11-02; `alltoall_comm_only` with `-gpu` and 1 MiB messages, stderr holds the `GPU mode:` line |
 | `samples/alltoall_b-ucx-warnings` | synthetic: the 1 KiB capture with UCX warning lines added before and inside the table |
 | `samples/alltoall_b-row-missing` | synthetic: the 1 KiB capture with a row removed; the wrapper must refuse it |
 | `samples/alltoall_b-truncated` | synthetic: the 1 KiB capture cut after 60 rows, as when a job is killed; the wrapper must refuse it |

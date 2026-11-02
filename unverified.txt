@@ -4,7 +4,6 @@ blink/allgather/allgather_b.py
 blink/allgather/allgather_comm_only.py
 blink/allgather/allgather_nb.py
 blink/allreduce/allreduce_nb.py
-blink/alltoall/alltoall_comm_only.py
 blink/alltoall/alltoall_man.py
 blink/alltoall/alltoall_nb.py
 blink/barrier/barrier_b.py
