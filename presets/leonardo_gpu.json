@@ -1,0 +1,86 @@
+{
+    "leonardo_gpu": {
+        "description": "Leonardo Cluster @ CINECA, whole GPU node (4 GPUs)",
+        "extends": "leonardo",
+        "sbatch": [
+            "--gres=gpu:4,tmpfs:0"
+        ],
+        "topology": {
+            "gpu_vendor": "nvidia",
+            "numa": {
+                "0": "0-15",
+                "1": "16-31"
+            },
+            "gpus": [
+                {
+                    "numa": 0,
+                    "pci": "0000:1d:00.0"
+                },
+                {
+                    "numa": 0,
+                    "pci": "0000:56:00.0"
+                },
+                {
+                    "numa": 0,
+                    "pci": "0000:8f:00.0"
+                },
+                {
+                    "numa": 0,
+                    "pci": "0000:c8:00.0"
+                }
+            ],
+            "nics": [
+                {
+                    "dev": "mlx5_0:1",
+                    "numa": 0,
+                    "pci": "0000:1a:00.0",
+                    "card": "1a:00",
+                    "rate_mbps": 100000,
+                    "link_layer": "InfiniBand",
+                    "near_gpu": 0,
+                    "dist": "PXB"
+                },
+                {
+                    "dev": "mlx5_1:1",
+                    "numa": 0,
+                    "pci": "0000:53:00.0",
+                    "card": "53:00",
+                    "rate_mbps": 100000,
+                    "link_layer": "InfiniBand",
+                    "near_gpu": 1,
+                    "dist": "PXB"
+                },
+                {
+                    "dev": "mlx5_2:1",
+                    "numa": 0,
+                    "pci": "0000:8c:00.0",
+                    "card": "8c:00",
+                    "rate_mbps": 100000,
+                    "link_layer": "InfiniBand",
+                    "near_gpu": 2,
+                    "dist": "PXB"
+                },
+                {
+                    "dev": "mlx5_3:1",
+                    "numa": 0,
+                    "pci": "0000:c5:00.0",
+                    "card": "c5:00",
+                    "rate_mbps": 100000,
+                    "link_layer": "InfiniBand",
+                    "near_gpu": 3,
+                    "dist": "PXB"
+                }
+            ],
+            "source": {
+                "kind": "probe",
+                "version": "1",
+                "date": "2026-11-02"
+            },
+            "physical": {
+                "0": "0-15",
+                "1": "16-31"
+            },
+            "nic_env": "UCX_NET_DEVICES"
+        }
+    }
+}

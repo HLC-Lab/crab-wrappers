@@ -140,6 +140,48 @@ def _crab_show(name, tmp_path):
     )
 
 
+def test_leonardo_gpu_asks_for_four_gpus_and_keeps_the_leonardo_gotchas(tmp_path):
+    result = _crab_show("leonardo_gpu", tmp_path)
+    assert result.returncode == 0, (
+        f"crab presets show leonardo_gpu --json exited {result.returncode}\n"
+        f"stdout: {result.stdout}\nstderr: {result.stderr}"
+    )
+    data = json.loads(result.stdout)
+    assert "error" not in data, data.get("error")
+    preset = data["preset"]
+
+    assert "leonardo" in data["extends"]
+
+    gres = [item for item in preset["sbatch"] if item.startswith("--gres=")]
+    assert gres == ["--gres=gpu:4,tmpfs:0"]
+    assert "--partition=boost_usr_prod" in preset["sbatch"]
+    assert "--account=<YOUR_ACCOUNT>" in preset["sbatch"]
+
+    assert preset["launcher"] == "srun"
+    assert "UCX_IB_SL" in preset["env"]
+    assert "CRAB_IB_DEVICES" in preset["env"]
+
+    topology = preset["topology"]
+    assert len(topology["gpus"]) == 4
+    assert len(topology["nics"]) == 4
+    assert [nic["near_gpu"] for nic in topology["nics"]] == [0, 1, 2, 3]
+    assert topology["nic_env"] == "UCX_NET_DEVICES"
+    assert topology["gpu_vendor"] == "nvidia"
+
+
+def test_leonardo_gpu_is_a_variant_that_leaves_leonardo_alone():
+    base = _load(PRESETS / "leonardo.json")
+    assert list(base) == ["leonardo"]
+    assert "topology" not in base["leonardo"]
+    assert "--gres=tmpfs:0" in base["leonardo"]["sbatch"]
+    assert not any("gpu" in item for item in base["leonardo"]["sbatch"])
+
+    variant = _load(PRESETS / "leonardo_gpu.json")["leonardo_gpu"]
+    assert variant["extends"] == "leonardo"
+    for key in ("scheduler", "launcher", "env", "header"):
+        assert key not in variant, f"a variant sets only what differs, but repeats {key!r}"
+
+
 def test_crab_is_installed():
     probe = subprocess.run(
         [sys.executable, "-c", "import crab.cli.main"], capture_output=True, text=True
