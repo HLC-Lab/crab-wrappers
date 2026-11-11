@@ -6,15 +6,21 @@ on:
 
 jobs:
   wrappers:
+    name: CRAB ${{ matrix.crab_ref }}, Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        crab_ref: [develop, sbatchman]
+        python-version: ["3.10", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Install CRAB
-        run: pip install "git+https://github.com/HLC-Lab/CRAB.git@develop"
-      - name: Every wrapper loads
+          python-version: ${{ matrix.python-version }}
+      - name: Install CRAB ${{ matrix.crab_ref }}
+        run: pip install "git+https://github.com/HLC-Lab/CRAB.git@${{ matrix.crab_ref }}"
+      - name: Every wrapper loads (CRAB ${{ matrix.crab_ref }}, Python ${{ matrix.python-version }})
         run: |
           CRAB_PATH_WRAPPERS="$PWD" crab wrappers list --json > wrappers.json
           python - <<'PY'
@@ -24,9 +30,9 @@ jobs:
               print(f"cannot load {w['relpath']}: {w['error']}")
           sys.exit(1 if bad else 0)
           PY
-      - name: Sample cases
+      - name: Sample cases (CRAB ${{ matrix.crab_ref }}, Python ${{ matrix.python-version }})
         run: CRAB_PATH_WRAPPERS="$PWD" crab wrappers test --strict
-      - name: Unit tests
+      - name: Unit tests (CRAB ${{ matrix.crab_ref }}, Python ${{ matrix.python-version }})
         run: |
           pip install pytest
           python -m pytest -q
