@@ -82,7 +82,7 @@ only when every case for it was written or reshaped by hand.
 
 | App | Wrappers | Verified (real run) | Verified (synthetic only) | Unverified |
 |---|---|---|---|---|
-| `blink` (2 need the fork blink-clean) | 40 | 2 | 2 | 36 |
+| `blink` | 38 | 3 | 2 | 33 |
 | `graph500` | 1 | 0 | 1 | 0 |
 | `quantum-espresso` (pw and ph, v6 and v7) | 4 | 4 | 0 | 0 |
 | `others` | 40 | 0 | 11 | 29 |
