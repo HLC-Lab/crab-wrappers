@@ -32,7 +32,7 @@ written as a mark like `--account=<YOUR_ACCOUNT>`, and you give it a value in a 
 CRAB's overrides directory, which patches the shared preset. `crab presets show <name>` prints the
 resolved preset, where each value comes from, which marks are still unset and the snippet to paste
 into your override file. The full description is the Presets page of
-[CRAB's documentation](https://hlc-crab.readthedocs.io/using/presets/), and
+[CRAB's documentation](https://hlc-crab.readthedocs.io/en/stable/using/presets/), and
 [CONTRIBUTING.md](CONTRIBUTING.md) has the rules for adding one here.
 
 ## The contract
@@ -42,7 +42,7 @@ names plus any key columns (for example the message size of a sweep). The older 
 of values per metric, is an error in CRAB 1.0: a run that returns it fails, and every wrapper in
 this repository was migrated to rows. This is wrapper contract version 1, which CRAB reports as
 `wrapper_api = 1`. The full guide is CRAB's
-[Writing a wrapper](https://hlc-crab.readthedocs.io/extending/wrappers/) page, and
+[Writing a wrapper](https://hlc-crab.readthedocs.io/en/stable/extending/wrappers/) page, and
 [CONTRIBUTING.md](CONTRIBUTING.md) lists the steps for adding one here.
 
 ## Versions

@@ -18,7 +18,7 @@ Use `--local` to create it in your CRAB checkout's `local/wrappers/` while it is
 
 The wrapper is a class named `app` that subclasses `crab.wrappers.base.base`. It implements
 wrapper contract version 1 (`wrapper_api = 1` in CRAB); the full description is CRAB's
-[Writing a wrapper](https://hlc-crab.readthedocs.io/extending/wrappers/) page.
+[Writing a wrapper](https://hlc-crab.readthedocs.io/en/stable/extending/wrappers/) page.
 
 - `executable`: the program name CRAB looks up on `PATH` when neither the config's `binary` key
   nor a receipt gives a path.
@@ -91,7 +91,7 @@ for users on a release. Your pull request goes to `main`.
 
 A preset describes one cluster, so it is shared by everyone who uses that cluster. It lives in
 `presets/<cluster>.json` as a JSON object of presets, `{"<name>": {...}}`, in the format of CRAB's
-[presets reference](https://hlc-crab.readthedocs.io/reference/presets/). One file may hold several
+[presets reference](https://hlc-crab.readthedocs.io/en/stable/reference/presets/). One file may hold several
 variants of a cluster. A preset name appears in one file only.
 
 Rules, which `tests/_test_presets.py` checks:
