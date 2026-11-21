@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   wrappers:
     name: CRAB ${{ matrix.crab_ref }}, Python ${{ matrix.python-version }}
