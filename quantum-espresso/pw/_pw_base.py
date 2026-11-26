@@ -22,6 +22,11 @@ class pw_base(base):
     def metadata(self) -> list:
         return [{"name": "wall_time", "unit": "seconds", "conv": 1.0}]
 
+    def get_extra_artifacts(self) -> list:
+        # The stdout read_data writes below: it is the run's only record of the clock table, and
+        # it survives `retain_files: false`.
+        return ["pw.out"]
+
     def read_data(self) -> list:
         content = str(self.stdout)
         run_dir = getattr(self, 'run_dir', os.getcwd())
