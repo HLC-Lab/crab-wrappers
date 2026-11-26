@@ -1,6 +1,6 @@
-"""Where the QE programs are, from the receipt the pw and ph wrappers share (qe-v6, qe-v7).
+"""Where the QE programs are, from the receipt the pw, ph and cp wrappers share (qe-v6, qe-v7).
 
-The receipt points at pw.x. ph.x is expected next to it.
+The receipt points at pw.x. ph.x and cp.x are expected next to it.
 """
 
 import os
@@ -33,21 +33,31 @@ def pw_from_receipt(receipt):
     return os.path.join(base_path, "build", "bin", "pw.x")
 
 
-def ph_next_to(pw, benchmark_id):
-    """ph.x in pw.x's directory, or the bare command `ph.x` when pw.x is a command name.
+def _next_to(pw, program, benchmark_id):
+    """`program` in pw.x's directory, or the bare command `program` when pw.x is a command name.
 
     Raises:
-        MissingBinaryError: pw.x is a path and there is no ph.x beside it.
+        MissingBinaryError: pw.x is a path and there is no `program` beside it.
     """
     if not pw:
         return None
     directory = os.path.dirname(pw)
     if not directory:
-        return "ph.x"
-    ph = os.path.join(directory, "ph.x")
-    if not os.path.isfile(ph):
+        return program
+    path = os.path.join(directory, program)
+    if not os.path.isfile(path):
         raise MissingBinaryError(
-            f"No ph.x at {ph}, the directory of pw.x from receipt {benchmark_id!r} ({pw}). "
-            "Install ph.x there, or set the app's 'binary' key in the config."
+            f"No {program} at {path}, the directory of pw.x from receipt {benchmark_id!r} ({pw}). "
+            f"Install {program} there, or set the app's 'binary' key in the config."
         )
-    return ph
+    return path
+
+
+def ph_next_to(pw, benchmark_id):
+    """ph.x next to pw.x (see `_next_to`)."""
+    return _next_to(pw, "ph.x", benchmark_id)
+
+
+def cp_next_to(pw, benchmark_id):
+    """cp.x next to pw.x (see `_next_to`)."""
+    return _next_to(pw, "cp.x", benchmark_id)

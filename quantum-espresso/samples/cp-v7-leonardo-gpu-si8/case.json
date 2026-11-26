@@ -1,0 +1,1 @@
+{"wrapper": "cp/v7.py", "args": "", "source": "real-run", "note": "Real cp.x output: Leonardo Booster, 1 node, 4 NVIDIA A100 (4 MPI processes), QE 7.4.1 GPU build, QE test-suite cp_si (8 Si atoms, damped electron dynamics), run on 2026-11-26."}

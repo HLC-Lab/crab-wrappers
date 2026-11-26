@@ -1,7 +1,7 @@
 """Shared parsing for Quantum ESPRESSO output: the program's total wall time.
 
-At the end of a run QE prints its first clock (labelled with the program name, `PWSCF` or
-`PHONON`) as a total line, then `JOB DONE.`. The wall part of that line is written by
+At the end of a run QE prints its first clock (labelled with the program name, `PWSCF`,
+`PHONON` or `CP`) as a total line, then `JOB DONE.`. The wall part of that line is written by
 `print_this_clock` in UtilXlib/clocks_handler.f90 (same in 6.x and 7.x) in one of these forms:
 
     (4X,F5.2,"s WALL")               under a minute       "    12.34s WALL"

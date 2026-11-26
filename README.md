@@ -84,7 +84,7 @@ only when every case for it was written or reshaped by hand.
 |---|---|---|---|---|
 | `blink` | 38 | 3 | 2 | 33 |
 | `graph500` | 1 | 0 | 1 | 0 |
-| `quantum-espresso` (pw and ph, v6 and v7) | 4 | 4 | 0 | 0 |
+| `quantum-espresso` (pw and ph, v6 and v7; cp, v7) | 5 | 5 | 0 | 0 |
 | `others` | 40 | 0 | 11 | 29 |
 
 ## Contributing
