@@ -20,6 +20,11 @@ with pip or pipx has no checkout: it clones this repository on first use, and `c
 keeps that clone current. `crab wrappers list` shows what CRAB finds and where each binary comes
 from.
 
+To have a language model draft a wrapper for you, give it [WRAPPER-SKILL.md](WRAPPER-SKILL.md)
+(or its raw address,
+`https://raw.githubusercontent.com/HLC-Lab/crab-wrappers/main/WRAPPER-SKILL.md`, which any chat
+can fetch). Give it also a real output of the application, its binary and the command line you ran.
+
 ## Presets
 
 A preset describes one cluster for CRAB: its scheduler, launcher, launcher flags, environment

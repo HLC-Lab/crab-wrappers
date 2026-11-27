@@ -14,6 +14,11 @@ crab wrappers test myapp --strict  # passes as generated
 
 Use `--local` to create it in your CRAB checkout's `local/wrappers/` while it is private.
 
+A language model can do these steps with you. Give it [WRAPPER-SKILL.md](WRAPPER-SKILL.md) (or its
+raw address, `https://raw.githubusercontent.com/HLC-Lab/crab-wrappers/main/WRAPPER-SKILL.md`),
+a real output of the application, its binary and the command line you ran. It follows the same
+steps as this file.
+
 ## 2. Write the wrapper
 
 The wrapper is a class named `app` that subclasses `crab.wrappers.base.base`. It implements
