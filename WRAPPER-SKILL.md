@@ -70,9 +70,11 @@ from the real output.
 - `executable` is the binary's program name, the one the human runs (for example `osu_latency`).
   The scaffold sets it to the app folder name: change it.
 - `benchmark_id` stays the app name, unless the human wants another receipt name.
-- In `read_data()`, skip empty lines and `#` lines and parse the numbers. Raise `ValueError`, with
-  a message naming the line or the missing part, when a data line does not have the expected shape,
-  when a value is not a number, and when no row was found at all.
+- In `read_data()`, parse the numbers the way the real output is laid out. For table output, as in
+  the worked example below, skip empty lines and `#` lines and read one row per line. For output
+  with named sections, find each section, then read its value line. Whatever the layout, raise
+  `ValueError`, with a message naming the line or the missing part, when a data line does not have
+  the expected shape, when a value is not a number, and when no row was found at all.
 
 Check: the file has no trace of the scaffold's `time:` parsing.
 
@@ -82,6 +84,10 @@ Check: the file has no trace of the scaffold's `time:` parsing.
 2. Write `<app>/samples/example/expected.json` from the output: a list with one object per row, in
    output order. With more than a few rows, generate it with a script that reads the raw output on
    its own. It must not call the wrapper, or a bug in the wrapper would be copied into the answer.
+   The test compares values exactly (a row must equal its expected row, so `0.1 + 0.2` does not
+   equal `0.3`). A derived value, such as a sum or a ratio of printed numbers, must therefore be
+   computed the same way in the script and in the wrapper, or rounded to the printed precision in
+   both.
 3. Set `<app>/samples/example/case.json` to the wrapper file, the arguments that were run and an
    empty `set`:
 
@@ -91,7 +97,8 @@ Check: the file has no trace of the scaffold's `time:` parsing.
 
 `args` is what CRAB calls the app's `args` in a config: the arguments given to the binary, nothing
 else. CRAB adds the launcher (`srun ...`) and the binary itself, so leave them out. Use `""` when
-the binary got no arguments.
+the binary got no arguments. `set` holds extra app config keys the wrapper reads as attributes
+(like `crab parse --set KEY=VALUE`): `{}` when the run used none.
 
 Check: nothing of the scaffold app is left in `stdout.txt`, `expected.json` or `case.json`.
 
@@ -105,8 +112,10 @@ Check: the last line reads `1 ok, 0 failed`. Read the failed count, not only the
 
 ### f. Break it once
 
-Remove one data line from `stdout.txt`, or change one value in `expected.json`, and run the test
-again. The last line must show a failed count above 0. Then restore the file and run it again until
+Change one value in `expected.json`, or remove one data line from `stdout.txt` (for output with a
+single row, changing the expected value is the reliable break), and run the test again. The last
+line must show a failed count above 0. A wrapper that raises under `--strict` also counts as
+uncovered, so a raise shows 2 failed: that is normal. Then restore the file and run it again until
 it is green. A test that cannot go red proves nothing.
 
 Confirm the break really changed the file. This command must now report a difference:
@@ -121,7 +130,9 @@ After you restore the file, the same command prints `ok: <n> rows match ...`.
 ### g. Record where the binary lives
 
 Ask the human for the binary's real path and the exact module line the jobs load. Do not guess
-either. `benchmark_id` is the receipt name. Run this on the machine where the jobs will run:
+either. `benchmark_id` is the receipt name. Run this on the machine where the jobs will run. A
+wrapper drafted on another machine (a laptop) must first be copied to that machine's CRAB, before
+this step and before any job:
 
 ```bash
 crab receipts set <app> --binary <path of the binary> --pre-run "<module load line>"
