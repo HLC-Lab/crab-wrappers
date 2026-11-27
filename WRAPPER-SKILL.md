@@ -58,14 +58,21 @@ crab wrappers new <app> --local
 
 This creates `<app>/<app>.py`, `<app>/README.md` and `<app>/samples/example/`, and prints the path
 it created. `--local` keeps the wrapper private and git-ignored, in CRAB's local wrappers folder.
+Call the folder that holds `<app>` the `<wrappers folder>`; the later steps use it.
 
-Check: the command printed `Created .../<app>/<app>.py`.
+Check: the command printed `Created <wrappers folder>/<app>/<app>.py`.
 
 ### c. Write `read_data()`
 
 Edit `<app>.py`: set `executable`, `benchmark_id`, `keys` and `metadata`, and write `read_data()`
-from the real output. Skip empty lines and `#` lines, parse the numbers, and raise `ValueError`
-naming what is missing when a line or a value is not there.
+from the real output.
+
+- `executable` is the binary's program name, the one the human runs (for example `osu_latency`).
+  The scaffold sets it to the app folder name: change it.
+- `benchmark_id` stays the app name, unless the human wants another receipt name.
+- In `read_data()`, skip empty lines and `#` lines and parse the numbers. Raise `ValueError`, with
+  a message naming the line or the missing part, when a data line does not have the expected shape,
+  when a value is not a number, and when no row was found at all.
 
 Check: the file has no trace of the scaffold's `time:` parsing.
 
@@ -79,8 +86,12 @@ Check: the file has no trace of the scaffold's `time:` parsing.
    empty `set`:
 
 ```json
-{"wrapper": "<app>.py", "args": "<the args that were run>", "set": {}}
+{"wrapper": "<app>.py", "args": "<the args given to the binary>", "set": {}}
 ```
+
+`args` is what CRAB calls the app's `args` in a config: the arguments given to the binary, nothing
+else. CRAB adds the launcher (`srun ...`) and the binary itself, so leave them out. Use `""` when
+the binary got no arguments.
 
 Check: nothing of the scaffold app is left in `stdout.txt`, `expected.json` or `case.json`.
 
@@ -95,9 +106,17 @@ Check: the last line reads `1 ok, 0 failed`. Read the failed count, not only the
 ### f. Break it once
 
 Remove one data line from `stdout.txt`, or change one value in `expected.json`, and run the test
-again. The last line must show a failed count above 0 (for example `0 ok, 2 failed`: a case that
-fails under `--strict` also leaves the wrapper uncovered). Then restore the file and run it again
-until it is green. A test that cannot go red proves nothing.
+again. The last line must show a failed count above 0. Then restore the file and run it again until
+it is green. A test that cannot go red proves nothing.
+
+Confirm the break really changed the file. This command must now report a difference:
+
+```bash
+crab parse <app>/<app>.py <wrappers folder>/<app>/samples/example/stdout.txt --check <wrappers folder>/<app>/samples/example/expected.json
+```
+
+(`<app>/<app>.py` is found on CRAB's wrapper search path, which includes the `--local` folder.)
+After you restore the file, the same command prints `ok: <n> rows match ...`.
 
 ### g. Record where the binary lives
 
@@ -108,7 +127,8 @@ either. `benchmark_id` is the receipt name. Run this on the machine where the jo
 crab receipts set <app> --binary <path of the binary> --pre-run "<module load line>"
 ```
 
-`--pre-run` can be repeated, one command each. If the binary does not exist on the machine where
+`--pre-run` can be repeated, one `--pre-run` per shell command: a single line such as
+`module load a b c` is one command. If the binary does not exist on the machine where
 you run it, add `--allow-missing` and tell the human why.
 
 Check: the command printed `Saved receipt '<app>': <path>`.
@@ -132,7 +152,9 @@ equal `benchmark_id`), the path or `executable`. A line with `cannot load:` show
 - Ratios, slowdowns and interference belong to the analysis, not the wrapper.
 - A wrapper meant for the shared crab-wrappers repository needs, in `case.json`, `"source": "real-run"`
   and a `"note"` naming the system, the date and the application version, plus a line in the app's
-  `README.md` saying the same. See CONTRIBUTING.md, section "Add a real sample".
+  `README.md` saying the same. Ask the human for the system, the run date and the application
+  version; never guess them (the version may be in the output header). See CONTRIBUTING.md,
+  section "Add a real sample".
 
 ## 5. Done means
 
@@ -173,7 +195,5 @@ def read_data(self):
     return rows
 ```
 
-That example is short on purpose. It fails with an unclear error on a line with three columns, and
-it returns an empty list when the output has no rows. Make yours raise `ValueError` with a message
-that names the line or the missing part, and raise when no row was found. Then check it with the
-steps above.
+That example is short on purpose: it does not raise on a bad line or on zero rows. Yours must, as
+step c says. Then check it with the steps above.
